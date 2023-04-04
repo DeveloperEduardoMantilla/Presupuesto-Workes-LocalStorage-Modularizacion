@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Delicious+Handrawn&display=swap');
+
+:root{
+    --color1: #283747;
+    --color2: #3498DB;
+    --tipografia1:'Roboto', sans-serif;
+    --tipografia2:'Delicious Handrawn', cursive;
+}
+
+*{
+    font-family: var(--tipografia1);
+}
+.body{
+    border-top:40px solid #3498DB;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.capa{
+    background-color: #fff;
+}
+.caja_ingresos{
+    background-color:  var(--color1);
+}
+.caja_ingresos h5{
+    font-family: var(--tipografia2);
+    font-size: 25px;
+}
+.caja_ingresos, .caja_egresos{
+    display: flex;
+    align-items: center;
+
+}
+.porcentajeEntrada, .d-flex h4, .d-flex h5{
+    margin: 0;
+    padding: 0;
+}
+.caja_egresos h5{
+    font-family: var(--tipografia2);
+    font-size: 25px;
+}
+.caja_egresos{
+    background-color: var(--color2);
+    font-family: var(--tipografia2);
+    font-size: 25px;
+    text-align: center;
+}
+
+.btn-formulario{
+    color: var(--color1);
+    font-size: 30px;
+}
+.ingresos h3{
+    color: var(--color1);
+    font-family: var(--tipografia2);
+    border-bottom: 2px solid #283747;
+}
+.grafico{
+    margin-top: 50px !important;
+    padding-top: 50px !important;
+    border-top: 20px solid #E74C3C;
+}
+.grafico h1{
+    color: var(--color1);
+    font-family: var(--tipografia2);
+}
+.egresos h3{
+    color: var(--color2);
+    font-family: var(--tipografia2);
+    border-bottom: 2px solid #3498DB;
+}
+.box1 h6{
+    font-family: var(--tipografia2);
+    font-size: 30px;
+}
+#presuDispo{
+    font-family: var(--tipografia2);
+    font-weight: 600;
+    border: none;
+    background: none;
+    text-align: center;
+    font-size: 40px;
+}
+.ingresos .dato, .egresos .dato{
+    color: black;
+}
+.ingresos .valor{
+    color: red;
+}
+.egresos .valor{
+    color: green;
+}
+.btn-remove{
+    background-color: transparent;
+    border: none;
+    color: #E74C3C;
+    font-size: 25px;
+}
+
+.porcentaje, .porcentajeEntrada{
+    height: 10px;
+    background-color: #E74C3C;
+    font-size: 10px;
+    padding: 3px 5px;
+    margin-left: 10px;
+    border-radius: 5px;
+    color: white;
+}
+.porcentajeEntrada{
+    height: 20px;
+}
+.buttonDrop{
+    background: none;
+    border: none;
+    color: #E74C3C;
+}
