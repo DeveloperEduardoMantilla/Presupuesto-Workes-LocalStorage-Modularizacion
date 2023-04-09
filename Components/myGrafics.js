@@ -3,7 +3,7 @@ export default{
         let data= 
         `
         <h1>Grafico</h1>
-        <div id="grafico" style="width: 600px;height:400px;"></div>
+        <div id="grafico"></div>
         `;
         document.querySelector("#graficos").insertAdjacentHTML("beforeend",data);
     }
