@@ -1,13 +1,12 @@
 export default{
+    
+
     showMethos(){
         let formulario = document.querySelector("#formData");
         let deleteStorage = document.querySelector("#deleteStorage");
-
         let tabla_ingresos = document.querySelector("#tabla_ingresos");
         let tabla_egresos = document.querySelector("#tabla_egresos");
-        let buttonDrop = document.querySelector(".buttonDrop");
-
-
+        let botonDrop = document.querySelectorAll(".buttonDrop");
         let data = [];
         let ingresosValor=0; 
         let egresosValor=0;
@@ -18,15 +17,15 @@ export default{
         const  worker = new Worker('./storage/wsMyMethods.js')
 
         formulario.addEventListener('submit', (e) =>{
+            
             e.preventDefault();
             let data = Object.fromEntries(new FormData(e.target))
 
-            let arrayString =localStorage.getItem("myArray");
-            let valor_actual= JSON.parse(arrayString);
+            let valor_actual= JSON.parse(localStorage.getItem("myArray"));
 
             worker.postMessage({type: 'guardarObjeto', a: data});
-            worker.onmessage = function(event) {
 
+            worker.onmessage = function(event) {
                 valor_actual.unshift(event.data);
                 let array_string = JSON.stringify(valor_actual)
                 localStorage.setItem("myArray", array_string)
@@ -35,8 +34,7 @@ export default{
                 cargaData([event.data]);
                 dropElement();
                 graficos(valor_actual);
-            
-
+ 
                 Swal.fire({
                 title: `Presupuesto "${event.data.descripcion}" agregado con exito!`,
                 timer: 3000,
@@ -47,13 +45,15 @@ export default{
                 toast: true
                 })
             };
+            formulario.reset();
         })
+
 
         window.addEventListener("load", ()=>{
             let dataLocal=JSON.parse(localStorage.getItem("myArray"));        
             let dataCargada=""
+
             if(dataLocal!==null){
-                
                 dataCargada= JSON.parse(localStorage.getItem("myArray"));
                 worker.postMessage({type: 'cargaData', a: dataLocal});
                 worker.onmessage = function(event) {
@@ -62,11 +62,6 @@ export default{
                     dropElement();
                     graficos(event.data);
                 };
-
-                //cargarValores(dataCargada);
-                //cargaData(dataCargada);
-                //dropElement();
-                //graficos(dataCargada);
             }else{
                 let miArray=[]
                 localStorage.setItem('myArray', JSON.stringify(data));
@@ -75,6 +70,7 @@ export default{
         })
 
         function cargarValores(data){
+            if(data){
             data.forEach((val,id)=>{
                 if(val.operacion== "+"){
                     ingresosValor+=parseInt(val.valor)
@@ -82,13 +78,19 @@ export default{
                     egresosValor=egresosValor+parseInt(val.valor)
                 }
             })
+            }else{
+                ingresosValor=0;
+                egresosValor=0;
+            }
         }
 
         function cargaData(data){
-
+            if(data){
+            
+            tabla_egresos.innerHTML="";
+            tabla_ingresos.innerHTML="";
             data.forEach((val,id)=>{
                 if(val.operacion== "+"){
-
                     tabla_ingresos.insertAdjacentHTML('beforeend',`
                     <tr>
                         <td class="dato">${val.descripcion}</td>
@@ -97,7 +99,6 @@ export default{
                     </tr>`)
                     
                 }else{
-                    console.log("ingresosValor, " , ingresosValor);
                     let porcentaje = ((val.valor*100)/ingresosValor)
                     tabla_egresos.insertAdjacentHTML('beforeend',`
                     <tr>
@@ -115,29 +116,31 @@ export default{
             document.querySelector("#ingresosValor").innerHTML = `$ ${ingresosValor}` 
             document.querySelector("#egresosValor").innerHTML = `$ ${egresosValor}` 
             let porcentajeEgreso=0;
-            
+
+            if(ingresosValor>0){
             porcentajeEgreso = ((egresosValor*100)/ingresosValor);
             document.querySelector("#porcentajeEgreso").innerHTML= `${porcentajeEgreso.toFixed(1)}%`
+            }else{
+                document.querySelector("#porcentajeEgreso").innerHTML= 0;
+            }
+            }else{
+                tabla_ingresos.innerHTML="";
+                tabla_egresos.innerHTML="";
+                document.querySelector("#grafico").innerHTML="";
+                document.querySelector("#presuDispo").innerHTML = 0
+                document.querySelector("#ingresosValor").innerHTML = 0
+                document.querySelector("#egresosValor").innerHTML = 0  
+                document.querySelector("#porcentajeEgreso").innerHTML= 0
+            }
         }
 
         deleteStorage.addEventListener('click',()=>{
             localStorage.clear();
-            location.reload();
+            cargaData(null);
+            data=[]
+            localStorage.setItem('myArray', JSON.stringify(data));  
+            cargarValores(null)      
         })
-
-        function dropElement(){
-            let elementos = document.querySelectorAll(".buttonDrop");
-
-            elementos.forEach(element =>{
-                    element.addEventListener('click', (event)=>{
-                        let dataCargada= JSON.parse(localStorage.getItem("myArray"));    
-                        dataCargada.splice(element.value, 1); 
-                        let dataupdate = JSON.stringify(dataCargada);
-                        localStorage.setItem("myArray", dataupdate);
-                        location.reload()
-                })
-            })
-        }
 
         function graficos(localSt){
         
@@ -174,7 +177,47 @@ export default{
         }]
         };
         myChart.setOption(options);
-        }    
+        }   
+        
+        window.jsPDF = window.jspdf.jsPDF;
+
+        document.querySelector("#btnGenerarPdf").addEventListener("click", function(){
+            var pdf = new jsPDF();
+            let dataArry=[]
+
+            pdf.addImage('./Assets/img/logo-campus.png', 10, 10, 40, 40);
+            pdf.setFontSize(18);
+            pdf.text('Sistema de Presupuesto, The end of the backend 3.0', 50, 30);
+            var columns = ["Operacion", "Descripcion", "Valor"];
+
+            let dataLocal= JSON.parse(localStorage.getItem("myArray"));
+            let data=[]
+
+            dataLocal.forEach((index,key)=>{
+                data.unshift(Object.values(dataLocal[key]));
+            })
+
+            pdf.autoTable(columns,data,
+                { margin:{ top: 50 }}
+            );
+                
+            pdf.save('mipdf.pdf');
+        })
+        
+        
+        function dropElement(){
+            let elementos = document.querySelectorAll(".buttonDrop");
+
+            elementos.forEach(element =>{
+                    element.addEventListener('click', (event)=>{
+                        let dataCargada= JSON.parse(localStorage.getItem("myArray"));    
+                        dataCargada.splice(element.value, 1); 
+                        let dataupdate = JSON.stringify(dataCargada);
+                        localStorage.setItem("myArray", dataupdate);
+                        location.reload()
+                })
+            })
+        }
         
     }
 }

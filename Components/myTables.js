@@ -1,5 +1,7 @@
 export default{
+
     showMyTables(){
+
         let data = `
         <div class="col-12 col-sm-12 ingresos">
             <h3>Ingresos</h3>
@@ -14,6 +16,7 @@ export default{
                 <tbody id="tabla_egresos">
                 </tbody>
             </table>
+            <button class="btn btn-danger btn-sm" id="btnGenerarPdf">Generar Pdf</button>
         </div>`;
 
         document.querySelector("#tablesData").insertAdjacentHTML("beforeend",data);
